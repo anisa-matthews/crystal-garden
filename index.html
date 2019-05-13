@@ -2,20 +2,30 @@
 
 	<head>
 		<meta charset=utf-8>
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<title>Crystal Garden</title>
+		<style>
+			body { margin: 0; color: #000; font-size:13px;text-align:center; }
+			canvas { width: 100%; height: 100% }
+			#info {
+				color:#ffff;
+				position: absolute;
+				top: 600px; 
+				width: 100%;
+				padding: 5px;
+				box-sizing: border-box;
+			}
+		</style>
 	</head>
 
-	<body onload="initScene();">
-		<h2>Crystal Garden</h2>
-		<h4> Anisa Matthews </h4>
-
-		<p>For my final project, I will be creating a 'crystal garden' with clickable healing stones, particularly of the quartz variety as those tend to naturally come in geometric shape. I imagine the crystals will float, maybe rain down and when the user hovers over them they'll light up.</p>
-
-		<center>
-			<canvas id='canvas1'></canvas>
-		</center>
+	<body>
+		<div id="info">
+			<h2> Crystal Garden </h2>
+			<h4> Anisa Matthews </h4>
+			<!-- <p>For my final project, I will be creating a 'crystal garden' with clickable healing stones, particularly of the quartz variety as those tend to naturally come in geometric shape. I imagine the crystals will float, maybe rain down and when the user hovers over them they'll light up.</p> -->
+		</div>
+		<script src='three.js'></script>
+		<script src="OrbitControls.js"></script>
+		<script src='app.js'></script>
 	</body>
-	
-	<script src='three.js'></script>
-	<script src='app.js'></script>
 </html>
