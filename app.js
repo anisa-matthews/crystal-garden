@@ -1,4 +1,6 @@
 var camera, controls, scene, renderer, group;
+var mouse = new THREE.Vector2();
+var INTERSECTED;
 
 init();
 animate();
@@ -11,7 +13,13 @@ function init(){
 	//camera
 	camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 100000 );
 	camera.position.z = 500;
-	controls = new THREE.OrbitControls( camera );
+
+	//renderer
+	renderer = new THREE.WebGLRenderer();
+	renderer.setSize( window.innerWidth, window.innerHeight );
+	document.body.appendChild( renderer.domElement );
+
+	controls = new THREE.OrbitControls( camera, renderer.domElement );
 
 	//background?
 	var loader = new THREE.TextureLoader();
@@ -59,24 +67,79 @@ function init(){
 	var ambient = new THREE.AmbientLight( 0xfde558 );
 	scene.add( ambient );
 
+	// when the mouse moves, call the given function
+	document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+}
 
-	//renderer
-	renderer = new THREE.WebGLRenderer();
-	renderer.setSize( window.innerWidth, window.innerHeight );
-	document.body.appendChild( renderer.domElement );
+function onDocumentMouseMove( event ) 
+{
+	// the following line would stop any other event handler from firing
+	// (such as the mouse's TrackballControls)
+	// event.preventDefault();
+	
+	// update the mouse variable
+	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 }
 
 //animate (update and render)
 
 function animate() {
 	requestAnimationFrame( animate );
-	controls.update();
+	render();
+	update();
+}
+
+function update() {
+
+	//rotate each crystal
 	group.children.forEach(e => {
 		//console.log('rotate');
 		e.rotation.x += 0.01;
 		e.rotation.y += 0.01;
 	});
-	// renderer.render(backgroundScene , backgroundCamera );
+
+	// find intersections
+
+	// create a Ray with origin at the mouse position
+	//   and direction into the scene (camera direction)
+	var vector = new THREE.Vector3( mouse.x, mouse.y, 1 );
+	vector.unproject(camera);
+	var ray = new THREE.Raycaster( camera.position, vector.sub( camera.position ).normalize() );
+
+	// create an array containing all objects in the scene with which the ray intersects
+	var intersects = ray.intersectObjects( group.children );
+	
+	// if there is one (or more) intersections
+	if ( intersects.length > 0 )
+	{
+		// if the closest object intersected is not the currently stored intersection object
+		if ( intersects[ 0 ].object != INTERSECTED ) 
+		{
+		    // restore previous intersection object (if it exists) to its original color
+			if ( INTERSECTED ) 
+				INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
+			// store reference to closest object as current intersection object
+			INTERSECTED = intersects[ 0 ].object;
+			// store color of closest object (for later restoration)
+			INTERSECTED.currentHex = INTERSECTED.material.color.getHex();
+			// set a new color for closest object
+			INTERSECTED.material.color.setHex( 0xffff00 );
+		}
+	} 
+	else // there are no intersections
+	{
+		// restore previous intersection object (if it exists) to its original color
+		if ( INTERSECTED ) 
+			INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
+		// remove previous intersection object reference
+		//     by setting current intersection object to "nothing"
+		INTERSECTED = null;
+	}
+	
+	controls.update();
+}
+
+function render() {
 	renderer.render( scene, camera );
 }
-animate();
