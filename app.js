@@ -16,7 +16,7 @@ function init(){
 	//background?
 	var loader = new THREE.TextureLoader();
 	loader.load('https://raw.githubusercontent.com/anisa-matthews/crystal-garden/master/forest-pan.jpeg', function( texture ) {
-	    var boxGeometry = new THREE.BoxGeometry( 10000, 10000, 10000 )
+	    var boxGeometry = new THREE.SphereGeometry( 10000, 600, 400 )
 	    var boxMaterial = new THREE.MeshBasicMaterial({
 	          map: texture,
 	          side: THREE.DoubleSide
@@ -42,8 +42,8 @@ function init(){
 		octa.rotation.y = Math.random() * 2 * Math.PI;
 		octa.rotation.z = Math.random() * 2 * Math.PI;
 
-		octa.scale.x = Math.random() + 1.0;
-		octa.scale.y = Math.random() + 1.0;
+		octa.scale.x = Math.random() + 1.5;
+		octa.scale.y = Math.random() + 1.5;
 		octa.scale.z = Math.random() + 1.0;
 
 		octa.updateMatrix();
@@ -55,6 +55,9 @@ function init(){
 	var light = new THREE.DirectionalLight( 0xffffff );
 	light.position.set( 1, 1, 1 );
 	scene.add( light );
+
+	var ambient = new THREE.AmbientLight( 0xfde558 );
+	scene.add( ambient );
 
 
 	//renderer
